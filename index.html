@@ -1,67 +1,142 @@
 <!DOCTYPE html>
 <html>
   <head>
-
-<script src="https://aframe.io/releases/1.1.0/aframe.min.js"></script>
-<script src="https://rawgit.com/donmccurdy/aframe-extras/v2.1.1/dist/aframe-extras.loaders.min.js"></script> 
-
+    <script src="https://aframe.io/releases/1.1.0/aframe.min.js"></script>
+    <script src="https://rawgit.com/donmccurdy/aframe-extras/v2.1.1/dist/aframe-extras.loaders.min.js"></script>
   </head>
-    <body>
+  <body>
     <a-scene>
+    
       <a-sky color="lightblue"></a-sky>
+      <a-entity light="type: hemisphere; color: #aab; groundColor: #444; intensity: 0.8"></a-entity>
+      <a-light type="directional" position="5 10 7" intensity="0.5" target="#ground"></a-light>
+
       
-       <!-- Put this inside the <a-scene> -->
+      <a-plane id="ground" rotation="-90 0 0" width="100" height="100" color="#7BC8A4"></a-plane>
+
+    
+      <a-sphere id="red" color="red" position="5 2 0" radius="0.2"></a-sphere>
+      <a-sphere id="yellow" color="yellow" position="5 1.5 0" radius="0.2"></a-sphere>
+      <a-sphere id="green" color="green" position="5 1 0" radius="0.2"></a-sphere>
+      <a-light id="green-light" type="point" color="green" intensity="2" distance="3" position="5 1 0" visible="false"></a-light>
+
+    
+      <script>
+        AFRAME.registerComponent('start-race', {
+          init: function () {
+            setTimeout(() => {
+              document.querySelector('#red').setAttribute('color', 'gray');
+              document.querySelector('#yellow').setAttribute('color', 'yellow');
+            }, 1000);
+
+            setTimeout(() => {
+              document.querySelector('#yellow').setAttribute('color', 'gray');
+              document.querySelector('#green').setAttribute('color', 'green');
+              document.querySelector('#green-light').setAttribute('visible', true);
+
+              document.querySelector('#car1').setAttribute('animation', {
+                property: 'position',
+                to: '20 0 0',
+                dur: 4000,
+                easing: 'linear'
+              });
+
+              document.querySelector('#car2').setAttribute('animation', {
+                property: 'position',
+                to: '20 0 -2',
+                dur: 4000,
+                easing: 'linear'
+              });
+
+            }, 3000);
+          }
+        });
+      </script>
+
+      <a-entity start-race></a-entity>
+
+   
       <a-entity 
-      ply-model="src:House and road.ply"
-      position="0 0 0"
-      rotation="-90 90 90"
+        ply-model="src: House and road.ply"
+        position="0 0 0"
+        rotation="-90 90 90"
+      ></a-entity>
+
+      
+      <a-entity 
+        id="car1"
+        ply-model="src: Racecar1.ply"
+        position="-0.5 0.2 1.5"
+        rotation="-90 90 90"
       ></a-entity>
 
       <a-entity 
-      ply-model="src:Racecar2.ply"
-      position="0 0 0"
-      rotation="-90 90 90"
+        id="car2"
+        ply-model="src: Racecar2.ply"
+        position="0.5 0.2 1.5"
+        rotation="-90 90 90"
       ></a-entity>
 
-      <a-entity 
-      ply-model="src:Racecar1.ply"
-      position="0 0 0"
-      rotation="-90 90 90"
-      ></a-entity>
-
-      <a-entity 
-      ply-model="src:person4.ply"
-      position="0 0 0"
-      rotation="-90 90 90"
-      ></a-entity>
-
-      <a-entity 
-      ply-model="src:person3.ply"
-      position="0 0 0"
-      rotation="-90 90 90"
-      ></a-entity>
-
-      <a-entity 
-      ply-model="src:person2.ply"
-      position="0 0 0"
-      rotation="-90 90 90"
-      ></a-entity>
-                 
-      <a-entity 
-      ply-model="src:person1.ply"
-      position="0 0 0"
-rotation="-90 90 90" 
-animation="
- property: position;
- from:0 0 0; 
-to:-0 0.3 0; 
-dur:450;
- loop:true; 
-dir:alternate 
-"
-     ></a-entity>
      
+      <a-light type="spot" position="-0.5 0.5 1.7" angle="20" intensity="2" color="#fff" target="#ground"></a-light>
+      <a-light type="spot" position="0.5 0.5 1.7" angle="20" intensity="2" color="#fff" target="#ground"></a-light>
 
+      
+      <a-entity ply-model="src: person1.ply" position="1 0 1" rotation="-90 90 90"
+        animation="property: position; from: 1 0 1; to: 1 0.3 1; dur: 450; loop: true; dir: alternate"></a-entity>
+
+      <a-entity ply-model="src: person2.ply" position="2 0 1" rotation="-90 90 90"
+        animation="property: position; from: 2 0 1; to: 2 0.3 1; dur: 450; loop: true; dir: alternate"></a-entity>
+
+      <a-entity ply-model="src: person3.ply" position="3 0 1" rotation="-90 90 90"
+        animation="property: position; from: 3 0 1; to: 3 0.3 1; dur: 450; loop: true; dir: alternate"></a-entity>
+
+      <a-entity ply-model="src: person4.ply" position="4 0 1" rotation="-90 90 90"
+        animation="property: position; from: 4 0 1; to: 4 0.3 1; dur: 450; loop: true; dir: alternate"></a-entity>
+
+        <a-assets>
+          <audio id="countdownSound" src="countdown.mp3.mp3"></audio>
+          <audio id="raceStartSound" src="race-start.mp3.mp3"></audio>
+        </a-assets>
+
+        <script>
+          AFRAME.registerComponent('auto-countdown', {
+            init: function () {
+              
+              document.querySelector('#countdownSound').play();
+  
+              setTimeout(() => {
+                document.querySelector('#red').setAttribute('color', 'gray');
+                document.querySelector('#yellow').setAttribute('color', 'yellow');
+              }, 1000);
+  
+              setTimeout(() => {
+                document.querySelector('#yellow').setAttribute('color', 'gray');
+                document.querySelector('#green').setAttribute('color', 'green');
+                document.querySelector('#green-light').setAttribute('visible', true);
+  
+              
+                document.querySelector('#raceStartSound').play();
+  
+               
+                document.querySelector('#car1').setAttribute('animation', {
+                  property: 'position',
+                  to: '-0.5 0.2 20',
+                  dur: 4000,
+                  easing: 'linear'
+                });
+                document.querySelector('#car2').setAttribute('animation', {
+                  property: 'position',
+                  to: '0.5 0.2 20',
+                  dur: 4000,
+                  easing: 'linear'
+                });
+              }, 3000);
+            }
+          });
+  
+          document.querySelector('a-scene').setAttribute('auto-countdown', '');
+        </script>
 
     </a-scene>
   </body>
